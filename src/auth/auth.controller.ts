@@ -11,8 +11,8 @@ export class AuthController {
   constructor(private AuthService: AuthService) {}
 
 	@HttpCode(HttpStatus.CREATED)
-	@Post('registration')
-	async registration(
+	@Post('register')
+	async register(
 		@Res() res: Response, 
 		@Body() user: User
 	) {
