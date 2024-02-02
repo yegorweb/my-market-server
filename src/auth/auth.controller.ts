@@ -61,14 +61,15 @@ export class AuthController {
 		@Req() req: Request, 
 		@Res() res: Response, 
 	) {
-		const { refreshToken } = req.cookies
+		const { token } = req.cookies
 
-		const userData = await this.AuthService.refresh(refreshToken)
+		const userData = await this.AuthService.refresh(token)
 		
     let newRefreshToken = userData.refreshToken
     delete userData.refreshToken
 
-    res.cookie(
+    res
+		.cookie(
 			'refreshToken', 
 			newRefreshToken, 
 			{ 
@@ -76,7 +77,14 @@ export class AuthController {
 				httpOnly: true,
 				secure: eval(process.env.HTTPS)
 			}
-		).json(userData)
+		)
+		.cookie(
+			'accessToken', 
+			userData.accessToken, 
+			{
+				maxAge
+			}
+		).json(userData.user)
 	}
 	
 	@HttpCode(HttpStatus.OK)
