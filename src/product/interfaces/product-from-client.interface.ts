@@ -6,7 +6,4 @@ export default interface EntryFromClient {
   description: string
   author: User
   responses: string[]
-  date: number
-  on_moderation: boolean
-  moderation_result?: boolean
 }

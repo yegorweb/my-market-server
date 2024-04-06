@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import ProductModel from 'src/product/models/product.model';
-import { RolesService } from 'src/roles/roles.service';
 import UserModel from './models/user.model';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
@@ -13,6 +12,6 @@ import { UserService } from './user.service';
     JwtModule
   ],
   controllers: [UserController],
-  providers: [RolesService, UserService]
+  providers: [UserService]
 })
 export class UserModule {}

@@ -31,19 +31,6 @@ export class UserClass {
 
   @Prop()
   avatar_url?: string
-
-  @Prop({ 
-    type: Number, 
-    required: true 
-  })
-  date: number
-
-  @Prop({
-    type: [String], 
-    default: [],
-    required: true
-  })
-  roles: string[]
 }
 
 export const UserSchema = SchemaFactory.createForClass(UserClass)

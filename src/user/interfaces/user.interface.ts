@@ -6,6 +6,4 @@ export interface User {
   email: string
   password: string
   avatar_url?: string
-  date: number
-  roles: string[]
 }

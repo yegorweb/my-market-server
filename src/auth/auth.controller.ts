@@ -11,8 +11,8 @@ export class AuthController {
   constructor(private AuthService: AuthService) {}
 
 	@HttpCode(HttpStatus.CREATED)
-	@Post('register')
-	async register(
+	@Post('registration')
+	async registration(
 		@Res() res: Response, 
 		@Body() user: User
 	) {
@@ -61,15 +61,14 @@ export class AuthController {
 		@Req() req: Request, 
 		@Res() res: Response, 
 	) {
-		const { token } = req.cookies
+		const { refreshToken } = req.cookies
 
-		const userData = await this.AuthService.refresh(token)
+		const userData = await this.AuthService.refresh(refreshToken)
 		
     let newRefreshToken = userData.refreshToken
     delete userData.refreshToken
 
-    res
-		.cookie(
+    res.cookie(
 			'refreshToken', 
 			newRefreshToken, 
 			{ 
@@ -77,14 +76,7 @@ export class AuthController {
 				httpOnly: true,
 				secure: eval(process.env.HTTPS)
 			}
-		)
-		.cookie(
-			'accessToken', 
-			userData.accessToken, 
-			{
-				maxAge
-			}
-		).json(userData.user)
+		).json(userData)
 	}
 	
 	@HttpCode(HttpStatus.OK)
@@ -130,7 +122,7 @@ export class AuthController {
 		@Req() req: RequestWithUser,
 		@Body('user') new_user: UserFromClient
 	) {
-		await this.AuthService.update(new_user, req.user)
+		return await this.AuthService.update(new_user, req.user)
 	}
   
 	@HttpCode(HttpStatus.OK)

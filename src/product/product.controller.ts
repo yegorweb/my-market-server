@@ -9,15 +9,12 @@ import Product from './interfaces/product.interface';
 import { ProductClass } from './schemas/product.schema';
 import { TryToGetUser } from 'src/auth/try-to-get-user.guard';
 import RequestWithUserOrNot from 'src/types/request-with-user-or-not.type';
-import { RolesService } from 'src/roles/roles.service';
-import { GlobalAdminGuard } from 'src/admin/global_admin.guard';
 
 @Controller('product')
 export class ProductController {
   constructor(
     @InjectModel('Product') private ProductModel: Model<ProductClass>,
     private ProductService: ProductService,
-    private RolesService: RolesService
   ) {} 
 
   @UseGuards(TryToGetUser)
@@ -25,10 +22,7 @@ export class ProductController {
   async get(
     @Req() req: RequestWithUserOrNot,
   ) {
-    let query: any = {
-      on_moderation: false,
-      moderation_result: true,
-    }
+    let query: any = {}
 
     if (req.user) {
       query.author = {
@@ -76,10 +70,7 @@ export class ProductController {
   ) {
     return await this.ProductModel.create(
       Object.assign(product, { 
-        on_moderation: true, 
-        moderation_result: null, 
         author: new mongoose.Types.ObjectId(req.user._id), 
-        date: Date.now() 
       })
     )
   }
@@ -121,32 +112,7 @@ export class ProductController {
       } 
     })
   }
-
-  @UseGuards(AuthGuard)
-  @HttpCode(HttpStatus.OK)
-  @Post('edit')
-  async edit(
-    @Req() req: RequestWithUser, 
-    @Body('product_id') product_id: string, 
-    @Body('product') new_product: Product, 
-  ) {
-    let product = await this.ProductModel.findById(product_id)
-
-    if (!product)
-      throw ApiError.BadRequest('Продукт не обнаружена. Возможно, её удалили')
-    if (req.user._id !== product.author._id.toString())
-      throw ApiError.AccessDenied()
-
-    await product.updateOne(Object.assign(
-      new_product, { 
-        on_moderation: true, 
-        moderation_result: null 
-      }
-    ), { runValidators: true })
-
-    return { message: 'Отредактировано' }
-  }
-
+  
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   @Delete('delete')
@@ -155,46 +121,40 @@ export class ProductController {
     @Query('product_id') product_id: string, 
   ) {
     let product = await this.ProductModel.findById(product_id)
-
+    
     if (!product)
-      throw ApiError.BadRequest('Продукт не обнаружена. Возможно её удалили раньше вас')
-
-    if (!this.RolesService.isGlobalAdmin(req.user.roles) && !this.ProductService.isAuthor(req.user, product))
-      throw ApiError.AccessDenied()
-
+    throw ApiError.BadRequest('Продукт не обнаружена. Возможно её удалили раньше вас')
+    
+    if (!this.ProductService.isAuthor(req.user, product))
+    throw ApiError.AccessDenied()
+    
     await product.deleteOne()
     return { message: 'Успешно удалено' }
   }
+  
+  // @UseGuards(AuthGuard)
+  // @HttpCode(HttpStatus.OK)
+  // @Post('edit')
+  // async edit(
+  //   @Req() req: RequestWithUser, 
+  //   @Body('product_id') product_id: string, 
+  //   @Body('product') new_product: Product, 
+  // ) {
+  //   let product = await this.ProductModel.findById(product_id)
 
-  @UseGuards(AuthGuard)
-  @HttpCode(HttpStatus.OK)
-  @Post('verify')
-  async verify(
-    @Req() req: RequestWithUser, 
-    @Body('product_id') product_id: string, 
-    @Body('moderation_result') moderation_result: string | boolean, 
-  ) {
-    let product = await this.ProductModel.findById(product_id)
-    if (!product)
-      throw ApiError.BadRequest('Продукт не обнаружена. Возможно, её удалили')
+  //   if (!product)
+  //     throw ApiError.BadRequest('Продукт не обнаружена. Возможно, её удалили')
+  //   if (req.user._id !== product.author._id.toString())
+  //     throw ApiError.AccessDenied()
 
-    if (!this.RolesService.isGlobalAdmin(req.user.roles))
-      throw ApiError.AccessDenied()
-    
-    await product.updateOne({ 
-      on_moderation: false, 
-      moderation_result 
-    })
-  }
+  //   await product.updateOne(Object.assign(
+  //     new_product, { 
+  //       on_moderation: true, 
+  //       moderation_result: null 
+  //     }
+  //   ), { runValidators: true })
 
-  @UseGuards(GlobalAdminGuard)
-  @Get('get-products-to-moderation')
-  async get_products_to_moderation(
-    @Req() req: RequestWithUser, 
-  ) {
-    return await this.ProductModel.find({ 
-      on_moderation: true, 
-    })
-  }
+  //   return { message: 'Отредактировано' }
+  // }
 }
-
+  

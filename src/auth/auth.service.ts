@@ -6,7 +6,6 @@ import { InjectModel } from '@nestjs/mongoose'
 import { UserClass } from 'src/user/schemas/user.schema'
 import { User } from 'src/user/interfaces/user.interface'
 import { UserFromClient } from 'src/user/interfaces/user-from-client.interface'
-import { RolesService } from 'src/roles/roles.service'
 import * as bcrypt from 'bcrypt'
 
 @Injectable()
@@ -14,7 +13,6 @@ export class AuthService {
   constructor(
     @InjectModel('User') private UserModel: Model<UserClass>,
     private TokenService: TokenService,
-    private RolesService: RolesService
   ) {}
 
   async registration(user: User | UserFromClient) {
@@ -26,8 +24,7 @@ export class AuthService {
       throw ApiError.BadRequest('Слишком короткий пароль')
     const password = await bcrypt.hash(user.password, 3)
 
-    let roles = ['student', user.roles.includes('mentor') ? 'mentor' : undefined]
-    const created_user = (await this.UserModel.create(Object.assign(user, { password, roles, date: Date.now() }))).toObject()
+    const created_user = (await this.UserModel.create(Object.assign(user, { password }))).toObject()
  
     const tokens = this.TokenService.generateTokens(created_user)
     await this.TokenService.saveToken(tokens.refreshToken)
@@ -73,9 +70,9 @@ export class AuthService {
       throw ApiError.UnauthorizedError()
 
     const user = (await this.UserModel.findById(userData._id)).toObject()
-
+    
     if (userData.password !== user.password)
-      throw ApiError.UnauthorizedError()
+      throw ApiError.AccessDenied('Аутентификация провалена. Пароль изменен')
 
     await this.TokenService.removeToken(refreshToken)
 
@@ -139,8 +136,6 @@ export class AuthService {
   }
   
   async update(new_user: UserFromClient, user: UserFromClient) {
-    delete new_user.date
-
     return await this.UserModel.findByIdAndUpdate(user._id, new_user, {
       new: true,
       runValidators: true

@@ -35,21 +35,6 @@ export class ProductClass {
     ref: 'User',
   }])
   responses: mongoose.Types.ObjectId[]
-
-  @Prop({ 
-    type: Number,
-    required: true,
-  })
-  date: number
-
-  @Prop({ 
-    type: Boolean,
-    required: true
-  })
-  on_moderation: boolean
-
-  @Prop()
-  moderation_result: boolean
 }
 
 export const ProductSchema = SchemaFactory.createForClass(ProductClass)

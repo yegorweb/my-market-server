@@ -7,7 +7,4 @@ export default interface Entry {
   description: string
   author: User
   responses: mongoose.Types.ObjectId[]
-  date: number
-  on_moderation: boolean
-  moderation_result?: boolean
 }

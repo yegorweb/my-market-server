@@ -7,7 +7,6 @@ import { AuthModule } from './auth/auth.module';
 import { TokenModule } from './token/token.module';
 import { UserModule } from './user/user.module';
 import { ProductModule } from './product/product.module';
-import { RolesModule } from './roles/roles.module';
 import { S3Module } from './s3/s3.module';
 
 @Module({
@@ -25,7 +24,6 @@ import { S3Module } from './s3/s3.module';
     TokenModule,
     UserModule,
     ProductModule,
-    RolesModule,
     S3Module
   ],
   controllers: [AppController],
