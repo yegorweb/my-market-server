@@ -66,7 +66,7 @@ export class ProductController {
   @Post('create')
   async create(
     @Req() req: RequestWithUser, 
-    @Body('product') product: Product, 
+    @Body() product: Product, 
   ) {
     return await this.ProductModel.create(
       Object.assign(product, { 
