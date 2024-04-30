@@ -1,4 +1,6 @@
-import EasyYandexS3 from "easy-yandex-s3";
+const EasyYandexS3 = require('easy-yandex-s3')
+console.log(process.env);
+
 
 export let s3 = new EasyYandexS3({
   auth: {
