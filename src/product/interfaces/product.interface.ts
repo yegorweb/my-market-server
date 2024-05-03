@@ -7,4 +7,9 @@ export default interface Entry {
   description: string
   author: User
   responses: mongoose.Types.ObjectId[]
+  address: string
+  location: {
+    type: 'Point'
+    coordinates: [number, number]
+  }
 }

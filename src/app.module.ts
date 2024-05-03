@@ -17,6 +17,7 @@ import { S3Module } from './s3/s3.module';
     MongooseModule.forRoot(process.env.MONGO_URL, {
       connectionFactory: (connection) => {
         connection.plugin(require('mongoose-autopopulate'))
+        connection.products.createIndex({ 'location': '2dsphere' })
         return connection
       }
     }),

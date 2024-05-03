@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { UserFromClient } from 'src/user/interfaces/user-from-client.interface';
 import { User } from 'src/user/interfaces/user.interface';
 import ProductFromClient from './interfaces/product-from-client.interface';
@@ -13,7 +13,7 @@ export class ProductService {
     @InjectModel('Product') private ProductModel: Model<ProductClass>,
   ) {}
 
-  isAuthor(user: User | UserFromClient, document: Product | ProductFromClient): boolean {
+  isAuthor(user: { _id: string | mongoose.Types.ObjectId }, document: { author: { _id: string | mongoose.Types.ObjectId } }): boolean {
     return user._id == document.author._id
   }
 }
