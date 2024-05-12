@@ -40,7 +40,9 @@ export class ProductClass {
   address: string
 
   @Prop(raw({
-    type: String,
+    type: {
+      type: String
+    },
     coordinates: [Number]
   }))
   location: Record<string, any>
