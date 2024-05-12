@@ -6,4 +6,9 @@ export default interface EntryFromClient {
   description: string
   author: User
   responses: string[]
+  address: string
+  location: {
+    type: 'Point'
+    coordinates: [number, number]
+  }
 }

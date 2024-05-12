@@ -1,4 +1,4 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory, raw } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
 import { User } from 'src/user/interfaces/user.interface';
 
@@ -7,7 +7,6 @@ export type ProductDocument = HydratedDocument<ProductClass>
 @Schema()
 export class ProductClass {
   @Prop({ 
-    type: String, 
     required: true,
     min: 4,
     max: 32
@@ -15,7 +14,6 @@ export class ProductClass {
   title: string
 
   @Prop({ 
-    type: String, 
     required: true, 
     min: 20,
     max: 150 
@@ -35,6 +33,17 @@ export class ProductClass {
     ref: 'User',
   }])
   responses: mongoose.Types.ObjectId[]
+
+  @Prop({ 
+    required: true
+  })
+  address: string
+
+  @Prop(raw({
+    type: String,
+    coordinates: [Number]
+  }))
+  location: Record<string, any>
 }
 
 export const ProductSchema = SchemaFactory.createForClass(ProductClass)
