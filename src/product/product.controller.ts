@@ -10,7 +10,7 @@ import Product from './interfaces/product.interface';
 import { ProductClass } from './schemas/product.schema';
 import { TryToGetUser } from 'src/auth/try-to-get-user.guard';
 import RequestWithUserOrNot from 'src/types/request-with-user-or-not.type';
-import { s3 } from '../s3/bucket';
+const EasyYandexS3 = require("easy-yandex-s3")
 
 @Controller('product')
 export class ProductController {
@@ -83,24 +83,29 @@ export class ProductController {
     @UploadedFiles() files: Array<Express.Multer.File>,
     @Query('_id') productId: String,
   ) {
+    const s3 = new EasyYandexS3({
+      auth: {
+        accessKeyId: process.env.YC_KEY_ID,
+        secretAccessKey: process.env.YC_SECRET,
+      },
+      Bucket: process.env.YC_BUCKET_NAME,
+      debug: false
+    })
+    
     let filenames = []
     let buffers = []
-    console.log(files);
     
     for (let file of files) {
       buffers.push({ buffer: file.buffer, name: file.originalname, });    // Буфер загруженного файла
     }
-    console.log(buffers);
     
     if (buffers.length) {
       let uploadResult = await s3.Upload(buffers, '/iwat/');
-      console.log(uploadResult);
       
       for (let upl of uploadResult) {
         filenames.push(upl.Location)
       }
     }
-    console.log(filenames);
     
     return await this.ProductModel.findByIdAndUpdate(productId, { $set: { images: filenames } })
   }
