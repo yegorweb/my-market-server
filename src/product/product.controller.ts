@@ -17,16 +17,22 @@ export class ProductController {
     private ProductService: ProductService,
   ) {} 
 
-  @UseGuards(TryToGetUser)
   @Get('get')
   async get(
-    @Req() req: RequestWithUserOrNot,
+    @Query('radius') radius: string,
+    @Query('geo_lon') geo_lon: string,
+    @Query('geo_lat') geo_lat: string
   ) {
     let query: any = {}
 
-    if (req.user) {
-      query.author = {
-        $ne: new mongoose.Types.ObjectId(req.user._id) 
+    if (radius && geo_lon && geo_lat) {
+      query.location = {
+        $geoWithin: {
+          $centerSphere: [
+            [Number(geo_lon), Number(geo_lat)],
+            Number(radius) / 6378.1
+          ]
+        }
       }
     }
 
