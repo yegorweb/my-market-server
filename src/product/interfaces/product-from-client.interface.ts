@@ -11,4 +11,5 @@ export default interface EntryFromClient {
     type: 'Point'
     coordinates: [number, number]
   }
+  images: string[]
 }

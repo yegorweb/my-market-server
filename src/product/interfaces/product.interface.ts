@@ -12,4 +12,5 @@ export default interface Entry {
     type: 'Point'
     coordinates: [number, number]
   }
+  images: string[]
 }
