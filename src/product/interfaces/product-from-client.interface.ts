@@ -12,4 +12,5 @@ export default interface EntryFromClient {
     coordinates: [number, number]
   }
   images: string[]
+  price: string
 }

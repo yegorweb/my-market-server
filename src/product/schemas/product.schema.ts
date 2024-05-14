@@ -6,42 +6,26 @@ export type ProductDocument = HydratedDocument<ProductClass>
 
 @Schema()
 export class ProductClass {
-  @Prop({ 
-    required: true,
-    min: 4,
-    max: 32
-  })
+  @Prop()
   title: string
 
-  @Prop({ 
-    required: true, 
-    min: 20,
-    max: 150 
-  })
+  @Prop()
   description: string
 
   @Prop({ 
     type: mongoose.SchemaTypes.ObjectId, 
     ref: 'User',
-    required: true,
     autopopulate: true
   })
   author: User
 
-  @Prop([{ 
-    type: mongoose.SchemaTypes.ObjectId, 
-    ref: 'User',
-  }])
-  responses: mongoose.Types.ObjectId[]
-
-  @Prop({ 
-    required: true
-  })
+  @Prop()
   address: string
 
-  @Prop({ 
-    required: true
-  })
+  @Prop()
+  price: string
+
+  @Prop()
   phone: string
 
   @Prop(raw({

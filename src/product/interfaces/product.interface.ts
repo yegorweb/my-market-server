@@ -13,4 +13,5 @@ export default interface Entry {
     coordinates: [number, number]
   }
   images: string[]
+  price: string
 }
