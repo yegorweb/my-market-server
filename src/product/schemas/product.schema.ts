@@ -39,6 +39,11 @@ export class ProductClass {
   })
   address: string
 
+  @Prop({ 
+    required: true
+  })
+  phone: string
+
   @Prop(raw({
     type: {
       type: String
