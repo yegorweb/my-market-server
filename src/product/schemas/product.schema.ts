@@ -46,6 +46,9 @@ export class ProductClass {
     coordinates: [Number]
   }))
   location: Record<string, any>
+
+  @Prop()
+  images: string[]
 }
 
 export const ProductSchema = SchemaFactory.createForClass(ProductClass)
